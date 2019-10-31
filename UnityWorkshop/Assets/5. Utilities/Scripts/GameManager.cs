@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -7,9 +8,10 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager instance = null;
     [SerializeField]private BoardManager boardScript;
-    [SerializeField] private Text ScoreText;
     public int score { get; private set; }
+    [SerializeField] private Text scoreText;
     private float time;
+    [SerializeField] private MovingCamera cam;
 
     void Awake()
     {
@@ -20,9 +22,6 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject);
         DontDestroyOnLoad(gameObject);
 
-        //lấy reference của board manager (ngoài ra còn cách kéo thả thông qua inspector
-        //boardScript = GetComponent<BoardManager>();
-
         // gọi hàm InitGame
         InitGame();
     }
@@ -30,24 +29,42 @@ public class GameManager : MonoBehaviour
     void InitGame()
     {
         // gọi sang Board Manager
-        boardScript.SetupScene();
+        boardScript.SetupScene(3);
         score = 0;
         time = 0;
-        ScoreText.text = score.ToString();
+
+        // khởi tạo score
+        scoreText.text = "Score: 0";
     }
 
+    // độ dài map
+    private int mapLength;
+    public int MapLength
+    {
+        get
+        {
+            return mapLength;
+        }
+        set
+        {
+            mapLength = value;
+            cam.SetMapLength(mapLength);
+        }
+    }
     
     private void Update()
     {
-        if(time>=1f)
-        {
-            time += Time.deltaTime - 1;
-            score += 50;
-            ScoreText.text = score.ToString();
-        }
-        else
-        {
-            time += Time.deltaTime;
-        }
+        
+    }
+
+    public void PlayerDeath()
+    {
+        Debug.LogError("Player DEATHHHHHHHHHH");
+    }
+
+    public void IncreaseScore(int addedScore)
+    {
+        score += addedScore;
+        scoreText.text = "Score: " + score;
     }
 }
